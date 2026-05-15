@@ -38,7 +38,8 @@ def scan_email():
 
     return jsonify({"result": result})
 
-app.run(debug=True)
+if __name__ == '__main__':
+    app.run(debug=False)
 
 
 
