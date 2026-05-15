@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Phishing Detector</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<h2>Auto URL Scan</h2>
+<ul id="results"></ul>
+
+<!-- ✅ AUTO SCAN SCRIPT -->
+<script>
+let urls = [
+    "http://secure-login-paypal.com",
+    "https://google.com"
+];
+
+let list = document.getElementById("results");
+
+urls.forEach(url => {
+    fetch("http://127.0.0.1:5000/scan", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({url: url})
+    })
+    .then(res => res.json())
+    .then(data => {
+        let item = document.createElement("li");
+        item.innerText = url + " → " + data.result;
+        list.appendChild(item);
+    });
+});
+</script>
+
+<hr>
+
+<h2>Scan Your Own URL</h2>
+
+<!-- ✅ INPUT (HTML, NOT inside script) -->
+<input type="text" id="urlInput" placeholder="Enter URL">
+<button onclick="scanURL()">Scan</button>
+
+<p id="result"></p>
+
+<!-- ✅ MANUAL SCAN SCRIPT -->
+<script>
+function scanURL() {
+    let url = document.getElementById("urlInput").value;
+
+    fetch("http://127.0.0.1:5000/scan", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({url: url})
+    })
+    .then(res => res.json())
+    .then(data => {
+    let resultText = document.getElementById("result");
+
+    resultText.innerText = data.result;
+
+    if (data.result === "Harmful") {
+        resultText.style.color = "red";
+    } else {
+        resultText.style.color = "green";
+    }
+    });
+}
+</script>
+
+</body>
+</html>
